@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mingsoft.weixin.dao.IOauthDao">
+	<sql id="column_list">
+		O.OAUTH_ID,O.OAUTH_APP_ID,O.OAUTH_SUCCESS_URL,O.OAUTH_ERROR_URL,
+		O.OAUTH_TYPE,O.OAUTH_DESCRIPTION,O.OAUTH_WEIXIN_ID
+	</sql>
+	
+	<!-- 微信回复实体绑定开始 -->
+	<resultMap id="resultMap" type="com.mingsoft.weixin.entity.OauthEntity">
+		<id column="OAUTH_ID" property="oauthId" /><!-- 自增长Id -->
+		<id column="OAUTH_WEIXIN_ID" property="oauthWeixinId" /><!-- 关联微信基础信息ID -->
+		<result column="OAUTH_APP_ID" property="oauthAppId" /><!-- 关联微信应用ID -->
+		<result column="OAUTH_SUCCESS_URL" property="oauthSuccessUrl" /><!--授权成功重定向地址 -->
+		<result column="OAUTH_ERROR_URL" property="oauthErrorUrl" /><!-- 授权失败或者错误重定向地址-->
+		<result column="OAUTH_TYPE" property="oauthType" /><!--授权成功重定向时携带的参数值 -->
+		<result column="OAUTH_DESCRIPTION" property="oauthDescription" /><!-- 授权描述 -->
+	</resultMap>
+	<!-- 微信回复实体绑定结束 -->
+	
+	<!-- 自定义字段查询单个实体开始 -->
+	<select id="getEntity" resultMap="resultMap">
+		SELECT  * FROM WX_OAUTH  WHERE  OAUTH_ID=#{oauthId}
+	</select>
+	<!-- 自定义字段查询单个实体结束 -->
+	
+	<!-- 查询授权列表开始(带分页) -->
+	<select id="queryList" resultMap="resultMap">
+		SELECT <include refid="column_list"/>
+		FROM WX_OAUTH O
+		<where>	
+			<if test="appId != null">
+				O.OAUTH_APP_ID = #{appId}
+			</if>
+			<if test="weixinId != null">
+			    and	O.OAUTH_WEIXIN_ID = #{weixinId}
+			</if>
+			ORDER BY O.OAUTH_ID DESC
+			<if test="page != null">
+				 limit
+				${page.pageNo*page.pageSize},#{page.pageSize}			
+			</if>
+		</where>
+	</select>
+	<!-- 查询授权列表结束(带分页) -->
+	
+	<!-- 根据应用编号和微信ID查询授权总数开始 -->
+	<select id="queryCount" resultType="int">
+		SELECT COUNT(*) FROM WX_OAUTH
+		<where>
+			<if test="appId != null">
+				OAUTH_APP_ID = #{appId}
+			</if>
+			<if test="weixinId != null">
+				and OAUTH_WEIXIN_ID = #{weixinId}
+			</if>
+		</where>
+	</select>
+	<!-- 根据应用编号微信ID查询授权总数结束 -->
+	
+	<!-- 新增授权开始 -->
+	<insert id="saveEntity" useGeneratedKeys="true" keyProperty="oauthId" parameterType="com.mingsoft.weixin.entity.OauthEntity">
+		INSERT INTO WX_OAUTH
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="oauthAppId != null">OAUTH_APP_ID,</if>
+			<if test="oauthWeixinId != null">OAUTH_WEIXIN_ID,</if>
+			<if test="oauthSuccessUrl != null">OAUTH_SUCCESS_URL,</if>
+			<if test="oauthErrorUrl != null">OAUTH_ERROR_URL,</if>
+			<if test="oauthType != null">OAUTH_TYPE,</if>
+			<if test="oauthDescription != null">OAUTH_DESCRIPTION,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="oauthAppId != null">#{oauthAppId},</if>
+			<if test="oauthWeixinId != null">#{oauthWeixinId},</if>
+			<if test="oauthSuccessUrl != null">#{oauthSuccessUrl},</if>
+			<if test="oauthErrorUrl != null">#{oauthErrorUrl},</if>
+			<if test="oauthType != null">#{oauthType},</if>
+			<if test="oauthDescription != null">#{oauthDescription},</if>
+		</trim>		
+	</insert>
+	<!-- 新增授权结束 -->
+	
+	<!-- 更新授权开始 -->
+	<update id="updateEntity" parameterType="com.mingsoft.weixin.entity.OauthEntity">
+		UPDATE WX_OAUTH
+		<set>
+			<if test="oauthSuccessUrl != null">OAUTH_SUCCESS_URL=#{oauthSuccessUrl},</if>
+			<if test="oauthErrorUrl != null">OAUTH_ERROR_URL=#{oauthErrorUrl},</if>
+			<if test="oauthDescription != null">OAUTH_DESCRIPTION=#{oauthDescription},</if>
+		</set>
+		WHERE OAUTH_ID = #{oauthId}	
+	</update>
+	<!-- 更新授权结束 -->
+	
+	<!-- 删除授权开始 -->
+	<delete id="deleteEntity" parameterType="int">
+		DELETE FROM WX_OAUTH WHERE OAUTH_ID = #{oauthId}
+	</delete>
+	<!-- 删除授权结束 -->
+	
+	<!--批量删除授权开始  -->
+	<delete id="deleteByIds">
+		delete from WX_OAUTH
+		<where>
+			OAUTH_ID  in <foreach collection="ids" item="item" index="index" 
+			open="(" separator="," close=")">#{item}</foreach>
+		</where>
+	</delete>	
+	<!--批量删除授权结束 -->
+</mapper>

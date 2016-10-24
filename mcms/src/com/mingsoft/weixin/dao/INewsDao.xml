@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mingsoft.weixin.dao.INewsDao">
+	<sql id="column_list">
+		n.news_id,n.news_weixin_id,n.news_type,n.news_master_article_id,n.news_child_article_ids,n.news_datetime,n.news_app_id,n.news_content,n.news_category_id
+	</sql>
+
+	<!-- 素材实体注入开始 -->
+	<resultMap id="resultMap" type="com.mingsoft.weixin.entity.NewsEntity">
+		<id column="news_id" property="newsId" /><!-- 微信素材编号 -->
+		<result column="news_type" property="newsType" /><!-- 微信素材类别编号 -->
+		<result column="news_master_article_id" property="newsMasterArticleId" /><!-- 微信素材封面 -->
+		<result column="news_child_article_ids" property="newsChildArticleIds" /><!-- 微信素材多图文，文章编号集合，以逗号隔开 -->
+		<result column="news_datetime" property="newsDateTime" /><!-- 素材发布时间 -->
+		<result column="news_app_id" property="newsAppId" /><!-- 素材所属站点ID -->
+		<result column="news_content" property="newsContent" /><!-- 素材内容 -->
+		<result column="news_weixin_id" property="newsWeixinId" /><!-- 素材所属微信ID -->
+		<result column="NEWS_CATEGORY_ID" property="newsCategoryId" />
+		<association property="newsCategory" column="NEWS_CATEGORY_ID" select="com.mingsoft.basic.dao.ICategoryDao.getEntity">
+		</association>
+	</resultMap>
+	<!-- 素材实体注入结束 -->
+
+	<!-- 素材添加开始 -->
+	<insert id="saveEntity" useGeneratedKeys="true" keyProperty="newsId" parameterType="com.mingsoft.weixin.entity.NewsEntity">
+		insert into wx_news
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="newsType != null">news_type,</if>
+			<if test="newsMasterArticleId != null">news_master_article_id,</if>
+			<if test="newsChildArticleIds != null">news_child_article_ids,</if>
+			<if test="newsDateTime != null">news_datetime,</if>
+			<if test="newsAppId != null">news_app_id,</if>
+			<if test="newsContent != null">news_content,</if>
+			<if test="newsCategoryId != null">news_category_id,</if>
+			<if test="newsWeixinId != null">news_weixin_id,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="newsType != null">#{newsType},</if>
+			<if test="newsMasterArticleId != null">#{newsMasterArticleId},</if>
+			<if test="newsChildArticleIds != null">#{newsChildArticleIds},</if>
+			<if test="newsDateTime != null">#{newsDateTime},</if>
+			<if test="newsAppId != null">#{newsAppId},</if>
+			<if test="newsContent != null">#{newsContent},</if>
+			<if test="newsCategoryId != null">#{newsCategoryId},</if>
+			<if test="newsWeixinId != null">#{newsWeixinId},</if>
+		</trim>
+	</insert>
+	<!-- 素材添加结束 -->
+
+	<!-- 根据id查询素材开始 -->
+	<select id="getEntity" resultMap="resultMap">
+		select * from wx_news where
+		news_id=#{id}
+	</select>
+	<!-- 根据id查询素材结束 -->
+	
+	<!-- 更新素材实体开始 -->
+	<update id="updateEntity">
+		update wx_news
+		<set>
+			<if test="newsMasterArticleId != null">news_master_article_id=#{newsMasterArticleId},</if>
+			<if test="newsChildArticleIds != null">news_child_article_ids=#{newsChildArticleIds},</if>
+			<if test="newsContent != null">news_content=#{newsContent},</if>
+			<if test="newsAppId != null"> news_app_id=#{newsAppId},</if>
+			<if test="newsDateTime != null">news_datetime=#{newsDateTime},</if>
+			<if test="newsCategoryId != null">news_category_id=#{newsCategoryId},</if>
+			<if test="newsWeixinId != null">news_weixin_id=#{newsWeixinId},</if>
+		</set>
+		where news_id = #{newsId}
+	</update>
+	<!-- 更新素材实体结束 -->
+	
+	<!-- 删除素材实体开始 -->
+	<update id="deleteEntity">
+		delete from wx_news where news_id=#{id}
+	</update>
+	<!-- 删除素材实体结束-->
+
+	<!-- 根据自定义字段查询素材集合开始(包含,排序和分页) -->
+	<select id="queryNewsListByCustom" resultMap="resultMap" parameterType="Map">
+		select
+		<include refid="column_list" />
+		from wx_news n	
+		<!-- 查询条件 -->
+		<if test="whereMap != null">
+			where
+			<foreach item="item" index="key" collection="whereMap" open=""
+				separator="AND" close="">
+				n.${key} = #{item}
+			</foreach>
+		</if>
+		<!-- 排序条件 -->
+		<if test="orderMap != null">
+			order by
+			<foreach item="item" index="key" collection="orderMap" open=""
+				separator="," close="">
+				n.${key}
+				<if test="item == true">desc</if>
+				<if test="item == false">asc</if>
+			</foreach>
+		</if>
+		<!-- 分页条件 -->
+		<if test="page != null">
+			limit ${page.pageNo*page.pageSize},#{page.pageSize}
+		</if>
+	</select>
+	<!-- 根据自定义字段查询素材集合结束(包含,排序和分页) -->
+
+	<!-- 查找消息集合开始 -->
+	<select id="queryCountNewsByCustom" resultType="int"
+		parameterType="Map">
+		select count(*) from
+		wx_news n
+		<if test="whereMap != null">
+			where
+			<foreach collection="whereMap" item="item" index="key" open=""
+				separator="AND" close="">
+				n.${key} = #{item}
+			</foreach>
+		</if>
+	</select>
+	<!-- 查找消息集合结束 -->
+
+	<!-- 根据微信素材id查找素材开始 -->
+	<select id="getNewsByNewsId" parameterType="int" resultMap="resultMap">
+		select
+		<include refid="column_list" />
+		from
+		wx_news n where n.news_id=#{newsId}
+	</select>
+	<!-- 根据微信素材id查找素材结束 -->
+
+	<!-- 查询图文素材开始(视图使用) -->
+	<select id="queryList" resultMap="resultMap">
+		select * from
+		wx_news where news_app_id=#{appId} and news_weixin_id=#{weixinId} order by news_id desc limit
+		${page.pageNo*page.pageSize},#{page.pageSize}
+	</select>	
+	<!--查询取图文素材结束(视图使用) -->
+	
+	<!-- D查找素材总数开始 -->
+	<select id="queryCount" resultType="int">
+		select count(*) from wx_news where news_app_id=#{appId} and news_weixin_id = #{weixinId}
+	</select>
+	<!-- 查找素材总数结束 -->
+	
+	<!-- 查找图文素材列表数据开始 -->
+	<select id="queryListNewsImage" resultMap="resultMap">
+		select * from wx_news where 1=1
+		<if test="appId != null">
+			and news_app_id=#{appId}
+		</if>
+		<if test="weixinId != null">
+			and news_weixin_id=#{weixinId}
+		</if>
+		<if test="singleNews != null">
+			and (news_type=#{singleNews} or news_type=#{news})
+		</if>
+		order by news_id desc
+		limit ${page.pageNo*page.pageSize},#{page.pageSize}
+	</select>
+	<!-- 查找图文素材列表数据结束 -->
+		
+	<!-- 查找图文消息的总数开始 -->
+	<select id="getCountNewsImage" resultType="int">
+		select count(*) from
+		wx_news where news_app_id=#{appId} and news_weixin_id=#{weixinId} and (news_type=#{singleNews} or news_type=#{news})
+	</select>
+	<!-- 查找图文消息的总数结束 -->
+	
+	<!-- 查询素材列表开始 -->
+	<select id="queryNewsList" resultMap="resultMap">
+		select * from wx_news where 1=1
+		<if test="appId != null">
+			and news_app_id=#{appId}
+		</if>
+		<if test="weixinId != null">
+			and news_weixin_id=#{weixinId}
+		</if>
+		<if test="categoryId != null">
+			and news_category_id=#{categoryId}
+		</if>
+		<if test="newsType != null">
+			and news_type=#{newsType}
+		</if>				
+		order by news_id desc
+		limit ${page.pageNo*page.pageSize},#{page.pageSize}
+	</select>
+	<!-- 查询素材列表结束 -->
+</mapper>

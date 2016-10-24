@@ -1,0 +1,25 @@
+欢迎使用微信插件
+功能：
+1、多个公众号管理，
+2、微信菜单，
+3、素材管理，
+4、微信用户，
+5、群发消息，
+6、关注回复
+7、关键字回复。
+
+
+安装说明：
+1、导入doc/ms-mweixin.sql数据到db-mcms-open(mcms系统对应到数据库) 注意如果已经安装过，可以跳过该过程；
+2、将文件覆盖合并到mcms开源项目,编译并重启mcms；
+3、先登录后台系统，在地址输入安装链接；http://cms后台管理地址/weixin/initWeixin.do 
+例如:http://localhost:8080/mcms/ms/login.do ，安装对应地址为：http://localhost:8080/mcms/ms/weixin/initWeixin.do 
+4、提示安装成功后返回主界面就可以看到微信菜单
+
+配置说明
+http://ip地址/mcms/weixin/token?t=mcms后台公众号管理列表的编号
+
+关注等页面报表不存在
+尝试解决方式：在my.cnf的 [mysqld] 下增加一行 lower_case_table_names=1
+
+测试钩子的ant编译问题

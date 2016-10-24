@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mingsoft.weixin.dao.IWeixinQrcodeDao">
+	<sql id="column_list">
+		QRCODE_ID,QRCODE_TITLE,QRCODE_VALUE,QRCODE_TYPE,
+		QRCODE_APP_ID,QRCODE_DESCRIPTION,QRCODE_DESCRIPTION,QRCODE_TIME,QRCODE_EXPIRE_TIME,QRCODE_WEIXIN_ID
+	</sql>
+	
+	<!-- 微信二维码实体关联信息开始  -->
+	<resultMap id="resultMap" type="com.mingsoft.weixin.entity.WeixinQrcodeEntity">
+		<id column="QRCODE_ID" property="qrcodeId" /><!-- 微信公众号二维码唯一编号 -->
+		<result column="QRCODE_TITLE" property="qrcodeTitle" /><!-- 微信公众号二维码名称 -->
+		<result column="QRCODE_VALUE" property="qrcodeValue" /><!-- 微信二维码场景值 -->
+		<result column="QRCODE_TYPE" property="qrcodeType" /><!-- 微信二维码类型：1.永久二维码2.临时二维码 -->
+		<result column="QRCODE_APP_ID" property="qrcodeAppId" /><!-- 公众号二维码对应应用ID -->
+		<result column="QRCODE_DESCRIPTION" property="qrcodeDescription" /><!-- 微信二维码描述 -->
+		<result column="QRCODE_TIME" property="qrcodeTime" /><!-- 微信二维码生成时间-->
+		<result column="QRCODE_EXPIRE_TIME" property="qrcodeExpireTime" /><!-- 微信二维码到期时间 -->
+		<result column="QRCODE_WEIXIN_ID" property="qrcodeWeixinId" /><!-- 二维码对应微信ID -->
+	</resultMap>
+	<!-- 微信二维码实体关联信息结束 -->
+	
+	<!-- 根据微信ID查询二维码总数开始 -->
+	<select id="queryCount" resultType="int">
+		SELECT COUNT(*) FROM wx_qrcode
+		<where>	
+			<if test="appId != null">
+				QRCODE_APP_ID = #{appId}
+			</if>		
+			<if test="weixinId != null">
+				and QRCODE_WEIXIN_ID = #{weixinId}
+			</if>
+		</where>
+	</select>
+	<!-- 根据微信ID查询二维码总数结束 -->
+	
+	<!-- 根据自定义字段查询微信二维码实体开始 -->  
+	<select id="getEntity" parameterType="Map" resultMap="resultMap">
+		select * from wx_qrcode
+		<where>
+			<if test="qrcodeId != null">QRCODE_ID = #{qrcodeId}</if>
+		</where>
+	</select>
+	<!-- 根据自定义字段查询微信二维码实体结束 -->
+		
+	<!-- 保存微信二维码实体开始 -->
+	<insert id="saveEntity" useGeneratedKeys="true" keyProperty="qrcodeId" parameterType="com.mingsoft.base.entity.BaseEntity">
+		insert into wx_qrcode
+		<!-- 添加表字段 -->
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="qrcodeTitle != null">QRCODE_TITLE,</if>
+			<if test="qrcodeValue != null">QRCODE_VALUE,</if>
+			<if test="qrcodeType != null">QRCODE_TYPE,</if>
+			<if test="qrcodeAppId != null">QRCODE_APP_ID,</if>
+			<if test="qrcodeDescription != null">QRCODE_DESCRIPTION,</if>
+			<if test="qrcodeTime != null">QRCODE_TIME,</if>
+			<if test="qrcodeExpireTime != null">QRCODE_EXPIRE_TIME,</if>
+			<if test="qrcodeWeixinId != null">QRCODE_WEIXIN_ID,</if>
+		</trim>	
+		<!-- 注入控制层字段 -->
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="qrcodeTitle != null">#{qrcodeTitle},</if>
+			<if test="qrcodeValue != null">#{qrcodeValue},</if>
+			<if test="qrcodeType != null">#{qrcodeType},</if>
+			<if test="qrcodeAppId != null">#{qrcodeAppId},</if>
+			<if test="qrcodeDescription != null">#{qrcodeDescription},</if>
+			<if test="qrcodeTime != null">#{qrcodeTime},</if>
+			<if test="qrcodeExpireTime != null">#{qrcodeExpireTime},</if>
+			<if test="qrcodeWeixinId != null">#{qrcodeWeixinId},</if>
+		</trim>
+	</insert>
+	<!--保存微信二维码实体结束  -->
+	
+	<!--批量删除微信二维码开始  -->
+	<delete id="deleteEntity" parameterType="java.lang.Integer">
+		delete from wx_qrcode
+			<where>				
+				<if test="qrcodeId != null">QRCODE_ID = #{qrcodeId}</if>
+			</where>
+	</delete>	
+	<!--批量删除微信二维码结束  -->
+	
+	<!-- 更新微信二维码开始 -->
+	<update id ="updateEntity" parameterType="com.mingsoft.base.entity.BaseEntity">
+		update wx_qrcode
+		<set>
+			<if test="qrcodeTitle != null">QRCODE_TITLE =#{qrcodeTitle},</if>
+			<if test="qrcodeValue != null">QRCODE_VALUE =#{qrcodeValue},</if>
+			<if test="qrcodeType != null">QRCODE_TYPE=#{qrcodeType},</if>
+			<if test="qrcodeAppId != null">QRCODE_APP_ID=#{qrcodeAppId},</if>
+			<if test="qrcodeDescription != null">QRCODE_DESCRIPTION =#{qrcodeDescription},</if>
+			<if test="qrcodeTime != null">QRCODE_TIME =#{qrcodeTime},</if>
+			<if test="qrcodeExpireTime != null">QRCODE_EXPIRE_TIME=#{qrcodeExpireTime},</if>
+			<if test="qrcodeWeixinId != null">QRCODE_WEIXIN_ID=#{qrcodeWeixinId},</if>
+		</set>
+		where QRCODE_ID = #{qrcodeId}
+	</update>
+	<!-- 更新微信二维码结束 -->
+	
+	<!--批量删除微信二维码开始  -->
+	<delete id="deleteByIds">
+		delete from wx_qrcode
+		<where>
+			QRCODE_ID  in <foreach collection="ids" item="item" index="index" 
+			open="(" separator="," close=")">#{item}</foreach>
+		</where>
+	</delete>	
+	<!--批量删除微信二维码结束  -->
+	
+	<!-- 分页查询微信二维码开始 -->
+	<select id="queryList" parameterType="java.util.Map" resultMap="resultMap">
+		SELECT <include refid="column_list"/> FROM wx_qrcode  
+		<!-- 查询条件 -->
+		where QRCODE_WEIXIN_ID = #{weixinId} and QRCODE_APP_ID = #{appId} order by QRCODE_ID desc			
+		<!-- 分页条件 -->
+		<if test="page != null">
+			limit ${page.pageNo*page.pageSize},#{page.pageSize}	
+		</if>
+	</select>
+	<!-- 分页查询微信二维码结束 -->
+	
+</mapper>

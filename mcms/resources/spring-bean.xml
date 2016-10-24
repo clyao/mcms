@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+               http://www.springframework.org/schema/context
+               http://www.springframework.org/schema/context/spring-context-4.0.xsd
+               http://www.springframework.org/schema/tx
+               http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+               http://www.springframework.org/schema/aop
+               http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+               http://www.springframework.org/schema/mvc
+        		http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<!-- 微信端请求处理bean开始 -->
+	<bean id="weixinEventChain" class="com.mingsoft.weixin.event.WeixinEventChain">
+		<property name="weixinEventHandlers">
+			<list>
+				<bean class="com.mingsoft.weixin.event.impl.QrcodeSubscribeEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.QrcodeNoSubscribeEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.SubscribeEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.UnSubscribeEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.LocationEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.MenuEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveTextEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveImageEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveLinkEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveLocationEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveVideoEventHandler" />
+				<bean class="com.mingsoft.weixin.event.impl.ReceiveVoiceEventHandler" />
+			</list>
+		</property>
+	</bean>
+	<!-- 微信端请求处理bean结束 -->
+
+</beans>

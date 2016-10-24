@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- default 指定ANT无参数运行时的target -->
+<project name="mcms" default="compile" basedir=".">
+
+	<!-- home of project -->
+	<!-- 项目的路径 -->
+	<property name="project.home" value="." />
+
+	<!-- name of project -->
+	<!-- 项目的名称 -->
+	<property name="project.name" value="mcms" />
+
+	<!-- home of tomcat -->
+	<!-- tomcat的路径 -->
+	<property name="tomcat.home" value="/usr/local/tomcat/apache-tomcat-7.0.72" />
+	
+	<!-- home of java -->
+	<!-- java的路径 -->
+	<property name="java.home" value="/usr/local/java/jdk1.7.0_80" />
+
+	<!-- home of web pages -->
+	<!-- WEB 根目录 -->
+	<property name="web.home" value="${project.home}/WebRoot" />
+
+	<!-- home of java source files -->
+	<!-- 待编译的源文件目录，eclipse标准WEB项目位于项目根目录下 -->
+	<property name="src.home" value="${project.home}/src" />
+	
+	<!-- home of xml config source files -->
+	<!-- 待编译的配置文件目录，eclipse标准WEB项目位于项目根目录下 -->
+	<property name="resource.home" value="${project.home}/resources" />
+
+	<!-- home of class files after compile -->
+	<!-- 编译后的CLASS文件，按照WEB项目特定文件组织结构放置 -->
+	<property name="classes.home" value="${web.home}/WEB-INF/classes" />
+
+	<!-- home of lib for build -->
+	<!-- 项目中的jar文件，按照WEB项目特定文件组织结构放置 -->
+	<property name="lib.home" value="${web.home}/WEB-INF/lib" />
+
+	<path id="compile.classpath">
+
+		<pathelement location="${java.home}/jre/lib/rt.jar" />
+		
+		<pathelement location="${classes.home}" />
+
+		<fileset dir="${lib.home}">
+
+			<include name="*.jar" />
+
+		</fileset>
+
+		<fileset dir="${tomcat.home}/lib">
+
+			<include name="*.jar" />
+
+		</fileset>
+
+	</path>
+
+	<target name="help">
+
+		<echo message="Please specify a target! [usage:ant targetname]" />
+
+		<echo message="Here is a list of possible targets:" />
+
+		<echo message="perpare....Creates directories if required" />
+
+		<echo message="compile....Compiles source files" />
+
+	</target>
+
+	<target name="prepare">
+
+		<tstamp />
+
+		<echo message="Ant vereion: ${ant.version}" />
+
+		<echo message="JDK version: ${java.runtime.version}" />
+
+		<echo message="Tomcat Home=${tomcat.home}" />
+
+		<echo message="Webapps Home=${webapps.home}" />
+
+		<echo message="classes Home=${classes.home}" />
+
+		<echo message="Java src Home=${src.home}" />
+
+		<!-- mkdir do nothing is the directory already exists. -->
+		<mkdir dir="${lib.home}" />
+
+		<!-- mkdir do nothing is the directory already exists. -->
+		<mkdir dir="${classes.home}" />
+		
+		<!-- copy file to directory -->
+		<copy todir="${classes.home}">  
+             <fileset dir="${resource.home}">  
+              <include name="*.*" />  
+           </fileset>  
+        </copy>
+		
+		<!-- copy file to directory -->
+		<copy todir="${classes.home}">  
+             <fileset dir="${src.home}">
+             	<exclude name="**/.svn"/>
+             	<exclude name="**/*.java"/>  
+           </fileset>  
+        </copy>
+
+	</target>
+
+	<target name="compile" depends="prepare">
+
+		<javac srcdir="${src.home}" destdir="${classes.home}" includeantruntime="on" debug="true">
+
+			<compilerarg value="-Xlint:unchecked"/>
+			
+			<compilerarg line="-XDignore.symbol.file"/>
+			
+			<compilerarg line="-encoding UTF-8" />
+
+			<classpath refid="compile.classpath" />
+
+		</javac>
+
+	</target>
+
+</project>

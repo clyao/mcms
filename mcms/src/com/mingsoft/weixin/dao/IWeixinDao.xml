@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mingsoft.weixin.dao.IWeixinDao">
+	<!-- 微信实体关联信息开始  -->
+	<resultMap id="resultMap" type="com.mingsoft.weixin.entity.WeixinEntity">
+		<id column="WEIXIN_ID" property="weixinId" /><!-- 微信公众号唯一编号 -->
+		<result column="APP_ID" property="appId" /><!-- 微信公众号所属用户编号 -->
+		<result column="WEIXIN_NO" property="weixinNo" /><!-- 微信号 -->
+		<result column="WEIXIN_ORIGIN_ID" property="weixinOriginId" /><!-- 微信原始ID -->
+		<result column="WEIXIN_NAME" property="weixinName" /><!-- 公众号名称 -->
+		<result column="WEIXIN_TYPE" property="weixinType" /><!-- 微信号类型 0:服务号 1:订阅号 -->
+		<result column="WEIXIN_TOKEN" property="weixinToken" /><!-- 微信token -->
+		<result column="WEIXIN_IMAGE" property="weixinImage" /><!-- 微信二维码图片 -->
+		<result column="WEIXIN_APPID" property="weixinAppID" /><!-- 应用编号 -->
+		<result column="WEIXIN_APPSECRET" property="weixinAppSecret" /><!-- 应用授权码 -->
+		<result column="WEIXIN_HEADIMG" property="weixinHeadImg" /><!-- 微信帐号的头像 -->
+		<result column="WEIXIN_MCHID" property="weixinPayMchId" /><!--微信支付mchid,申请认证是邮件里面有  -->
+		<result column="WEIXIN_PAYKEY" property="weixinPayKey" /><!-- 微信支付key,申请认证是邮件里面有 -->
+		<result column="WEIXIN_RROXY_URL" property="weixinProxyUrl" /><!--映射内网测试网地址  -->
+		<result column="WEIXIN_OAUTH_URL" property="weixinOauthUrl" /><!-- 网页2.0授权地址 -->
+	</resultMap>
+	<!-- 微信实体关联信息结束 -->
+	
+	<!-- 根据自定义字段查询微信实体开始 -->  
+	<select id="getEntity" parameterType="Map" resultMap="resultMap">
+		select * from wx_weixin
+		<where>
+			<if test="appId != null">and app_id = #{appId}</if>
+			<if test="weixinId != null">and weixin_id = #{weixinId}</if>
+			<if test="weixinOriginId != null">and weixin_origin_id = #{weixinOriginId}</if>
+		</where>
+	</select>
+	<!-- 根据自定义字段查询微信实体结束 -->
+	
+	<!--分页查询开始-->
+	<select id="queryList" resultMap="resultMap" parameterType="int">
+		select * from wx_weixin
+		<!-- 查询条件开始 -->
+		<where>
+			APP_ID = #{appId}
+		</where>
+		<!-- 查询条件结束 -->
+		ORDER BY WEIXIN_ID DESC<!-- 根据weixinId进行排序 -->
+		<!-- 分页条件开始 -->
+		<if test="page != null">
+			limit ${page.pageNo*page.pageSize},#{page.pageSize}
+		</if>
+		<!-- 分页条件结束 -->
+	</select>	
+	<!--分页查询结束-->
+	
+	<!-- 根据appId查询数量开始 -->
+	<select id="getCountByAppId" resultType="int">
+		select count(*) from wx_weixin
+		<where>
+			and app_id = #{appId}
+		</where>
+	</select>
+	<!-- 根据appId查询数量结束 -->	
+	
+	<!-- 保存微信实体开始 -->
+	<insert id="saveEntity" useGeneratedKeys="true" keyProperty="weixinId" parameterType="com.mingsoft.base.entity.BaseEntity">
+		insert into wx_weixin
+		<!-- 添加表字段 -->
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="appId != null">APP_ID,</if><!-- 微信公众号所属用户编号-->
+			<if test="weixinNo != null">WEIXIN_NO,</if><!-- 添加微信号  -->
+			<if test="weixinOriginId != null">WEIXIN_ORIGIN_ID,</if><!-- 添加微信原始ID-->
+			<if test="weixinName != null">WEIXIN_NAME,</if><!-- 添加公众号名称 -->
+			<if test="weixinType != null">WEIXIN_TYPE,</if><!-- 添加微信号类型 0:服务号 1:订阅号-->
+			<if test="weixinToken != null">WEIXIN_TOKEN,</if><!-- 添加微信token-->
+			<if test="weixinImage != null">WEIXIN_IMAGE,</if><!-- 添加二维码图片-->
+			<if test="weixinAppID != null">WEIXIN_APPID,</if><!-- 添加微信应用编号 -->
+			<if test="weixinAppSecret != null">WEIXIN_APPSECRET,</if><!-- 添加微信应用编号 -->
+			<if test="weixinHeadImg != null">WEIXIN_HEADIMG,</if><!-- 添加微信帐号的头像 -->
+			<if test="weixinPayMchId  != null "  >WEIXIN_MCHID,</if><!--微信支付mchid,申请认证是邮件里面有  -->
+			<if test="weixinPayKey  != null"  >WEIXIN_PAYKEY,</if><!-- 微信支付key,申请认证是邮件里面有 -->
+			<if test="weixinProxyUrl  != null" >WEIXIN_RROXY_URL,</if><!--映射内网测试网地址  -->
+			<if test="weixinOauthUrl  != null" >WEIXIN_OAUTH_URL,</if><!--网页2.0授权地址  -->
+		</trim>		
+		<!-- 注入控制层字段 -->
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="appId != null">#{appId},</if><!-- 微信公众号所属应用编号-->
+			<if test="weixinNo != null">#{weixinNo},</if><!-- 添加微信号  -->
+			<if test="weixinOriginId != null">#{weixinOriginId},</if><!-- 添加微信原始ID-->
+			<if test="weixinName != null">#{weixinName},</if><!-- 添加公众号名称 -->
+			<if test="weixinType != null">#{weixinType},</if><!-- 添加微信号类型 0:服务号 1:订阅号-->
+			<if test="weixinToken != null">#{weixinToken},</if><!-- 添加微信token-->
+			<if test="weixinImage != null">#{weixinImage},</if><!-- 添加二维码图片-->
+			<if test="weixinAppID != null">#{weixinAppID},</if><!-- 添加微信应用编号 -->
+			<if test="weixinAppSecret != null">#{weixinAppSecret},</if><!-- 添加微信应用编号 -->
+			<if test="weixinHeadImg != null">#{weixinHeadImg},</if><!-- 添加微信帐号的头像 -->
+			<if test="weixinPayMchId  != null">#{weixinPayMchId},</if><!--微信支付mchid,申请认证是邮件里面有  -->
+			<if test="weixinPayKey  != null" >#{weixinPayKey},</if><!-- 微信支付key,申请认证是邮件里面有 -->
+			<if test="weixinProxyUrl  != null" >#{weixinProxyUrl},</if><!--映射内网测试网地址  -->
+			<if test="weixinOauthUrl  != null" >#{weixinOauthUrl},</if><!--网页2.0授权地址  -->
+		</trim>
+	</insert>
+	<!--保存微信实体结束  -->
+	
+	<!--批量删除微信开始  -->
+	<delete id="deleteByIds" parameterType="java.lang.Integer">
+		delete from wx_weixin
+			<if test="ids != null">
+				<where>				
+					WEIXIN_ID in 
+						<!--ids为微信ID集合,dao中的@param传来的参数-->
+						<foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+							#{item}
+						</foreach>			
+				</where>
+			</if>
+	</delete>	
+	<!--批量删除微信结束  -->
+	
+	<!--删除微信开始  -->
+	<delete id="deleteEntity">
+		delete from wx_weixin where weixin_id = #{weixinId}
+	</delete>
+	<!--删除微信结束  -->
+	
+	<!-- 更新微信实体开始 -->
+	<update id ="updateEntity" parameterType="com.mingsoft.base.entity.BaseEntity">
+		update wx_weixin
+		<set>
+			<if test="weixinNo != null">WEIXIN_NO =#{weixinNo},</if><!--微信号  -->
+			<if test="weixinOriginId != null">WEIXIN_ORIGIN_ID =#{weixinOriginId},</if><!--微信原始ID  -->
+			<if test="weixinName != null">WEIXIN_NAME=#{weixinName},</if><!--公众号名称  -->
+			<if test="weixinType != null">WEIXIN_TYPE=#{weixinType},</if><!--微信类型  -->
+			<if test="weixinToken != null">WEIXIN_TOKEN =#{weixinToken},</if><!--微信token -->
+			<if test="weixinImage != null">WEIXIN_IMAGE =#{weixinImage},</if><!--微信二维码  -->
+			<if test="weixinAppID != null">WEIXIN_APPID=#{weixinAppID},</if><!--微信应用ID  -->
+			<if test="weixinAppSecret != null">WEIXIN_APPSECRET=#{weixinAppSecret},</if><!--微信应用授权码  -->
+			<if test="weixinHeadImg != null">WEIXIN_HEADIMG=#{weixinHeadImg},</if><!--微信头像  -->
+			<if test="weixinPayMchId !=null"  >WEIXIN_MCHID=#{weixinPayMchId},</if><!--微信支付mchid,申请认证是邮件里面有  -->
+			<if test="weixinPayKey  !=null" >WEIXIN_PAYKEY=#{weixinPayKey},</if><!-- 微信支付key,申请认证是邮件里面有 -->
+			<if test="weixinProxyUrl  !=null" >WEIXIN_RROXY_URL=#{weixinProxyUrl},</if><!--映射内网测试网地址  -->
+			<if test="weixinOauthUrl  !=null" >WEIXIN_OAUTH_URL=#{weixinOauthUrl},</if><!--网页2.0授权地址  -->
+		</set>
+		where WEIXIN_ID = #{weixinId}
+	</update>
+	<!-- 更新微信实体结束 -->
+</mapper>
