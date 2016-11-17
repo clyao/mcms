@@ -1,2 +1,9 @@
 /com
+/log4j.properties
+/ms.properties
+/mybatis-config.xml
+/spring-bean.xml
+/spring-mvc.xml
+/spring-mybatis.xml
+/spring-shiro.xml
 /net
