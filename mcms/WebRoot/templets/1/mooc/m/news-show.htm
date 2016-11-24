@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>{ms:global.name/}</title>
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/list.css">
+    <link rel="stylesheet" href="{ms:globalskin.url/}/css/detail.css">
+    <script type="text/javascript" src="{ms:globalskin.url/}/js/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+  	<div class="goBack">返回</div>
+  	<div class="navTitle">{ms:field.title/}</div>
+  </div>
+  <div class="wrap">
+    <div class="main">
+      <div class="block">
+        <div class="content">
+  		    <div class="content-th">
+  		   		<h1 id="contentTitle">{ms:field.title/}</h1>
+		      </div>
+  		    <div class="post-info">     
+    		       <p class="post-time">{ms:field.date fmt=yyyy-MM-dd hh:mm/}</p>
+  		    </div>
+  		    <div class="content-txt  gbbcode-content" id="contentTxt">
+    		   		 {ms:field.content/}
+  		    </div>               
+  		  </div>
+        <div id="comments" class="cmts"></div>
+      </div>
+      <div class="metPage">
+        <p>上一篇：<a href="{ms:field.prelink/}">{ms:field.pretitle/}</a></p>
+        <p>下一篇：<a href="{ms:field.nextlink/}">{ms:field.nexttitle/}</a></p>
+      </div>
+    </div>
+  </div> 
+</body>
+</html>
