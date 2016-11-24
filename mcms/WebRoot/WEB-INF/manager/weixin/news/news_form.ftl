@@ -256,7 +256,7 @@
 			                        <p class="onl_tit title"><#if news?has_content>${news.newsMasterArticle.basicTitle?default("标题")}<#else>标题</#if></p>
 			                        <div class="onl_name newsImg img"> 
 			                            <#if news?has_content>
-			                            	<img src="${news.newsMasterArticle.basicThumbnails}"/>
+			                            	<img src="${basePath}${news.newsMasterArticle.basicThumbnails}"/>
 			                            <#else>
 				                            <img src="#" class="onl_img"/>
 				                            <i>封面图片</i>		                            
@@ -273,7 +273,7 @@
 			                 		<div class="parentNews marsterId" data-click="false" <#if news?has_content>data-id="${news.newsMasterArticle.basicId}"</#if>>
 			                 			<div class="newsImg img">
 				                            <#if news?has_content>
-				                            	<img src="${news.newsMasterArticle.basicThumbnails}"/>
+				                            	<img src="${basePath}${news.newsMasterArticle.basicThumbnails}"/>
 				                            <#else>
 					                            <img src="#" class="onl_img"/>
 					                            <i>封面图片</i>		                            

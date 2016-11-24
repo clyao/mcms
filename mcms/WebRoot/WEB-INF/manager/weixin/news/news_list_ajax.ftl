@@ -460,7 +460,7 @@
 				            <div class="appmsg_info">
 				                <em class="appmsg_date">${list.newsDateTime?string('MM月dd日')}</em>
 				            </div>
-				            <div class="appmsg_thumb_wrp"><img src="${list.newsMasterArticle.basicThumbnails?default('')}" alt="" class="appmsg_thumb"></div>
+				            <div class="appmsg_thumb_wrp"><img src="${basePath}${list.newsMasterArticle.basicThumbnails?default('')}" alt="" class="appmsg_thumb"></div>
 				            <p class="appmsg_desc">${list.newsMasterArticle.basicDescription?default('')}</p>
 					    </div>
 					    <div class="mask"><i class='icon iconfont' style='font-size:60px;position: absolute;top: 36%;left: 40%;display:none;'>&#xe693;</i></div>
@@ -477,7 +477,7 @@
 				            </div>
 				            <div class="cover_appmsg_item">
 				                <h4 class="appmsg_title">${list.newsMasterArticle.basicTitle?default('')}</h4>
-				                <div class="appmsg_thumb_wrp"><img src="${list.newsMasterArticle.basicThumbnails?default('')}" alt="" class="appmsg_thumb"></div>
+				                <div class="appmsg_thumb_wrp"><img src="${basePath}${list.newsMasterArticle.basicThumbnails?default('')}" alt="" class="appmsg_thumb"></div>
 				            </div>
 	       					<#if list.childs?has_content>
 	       						<#list list.childs as listChild>

@@ -23,3 +23,9 @@ http://ip地址/mcms/weixin/token?t=mcms后台公众号管理列表的编号
 尝试解决方式：在my.cnf的 [mysqld] 下增加一行 lower_case_table_names=1
 
 测试钩子的ant编译问题
+
+微信插件问题：
+1、部署路径不是root出现素材图片无法显示
+
+解决方案：
+添加一个绝对路径：${basePath}

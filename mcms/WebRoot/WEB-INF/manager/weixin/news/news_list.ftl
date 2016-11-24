@@ -187,7 +187,7 @@
 								            <div class="appmsg_info">
 								                <em class="appmsg_date">${list.newsDateTime?string('MM月dd日')}</em>
 								            </div>
-							            	<div class="appmsg_thumb_wrp"><img src="<#if list.newsMasterArticle?has_content>${list.newsMasterArticle.basicThumbnails?default('')}</#if>" alt="" class="appmsg_thumb"></div>
+							            	<div class="appmsg_thumb_wrp"><img src="<#if list.newsMasterArticle?has_content>${basePath}${list.newsMasterArticle.basicThumbnails?default('')}</#if>" alt="" class="appmsg_thumb"></div>
 							            	<p class="appmsg_desc"><#if list.newsMasterArticle?has_content>${list.newsMasterArticle.basicDescription?default('')}</#if></p>
 							        	</div>				    
 									    <div class="appmsg_opr">
